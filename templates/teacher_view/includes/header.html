@@ -1,0 +1,146 @@
+<!-- Bootstrap CSS + Icons already loaded in base -->
+<style>
+  .sidebar {
+    width: 220px;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    background-color: #343a40;
+    color: white;
+    padding-top: 56px;
+    z-index: 1;
+  }
+
+  .content {
+    margin-left: 0;
+    padding-top: 70px;
+  }
+
+  @media (min-width: 992px) {
+    .content {
+      margin-left: 220px;
+    }
+  }
+  .custom-cart-dropdown {
+  min-width: 350px; /* or more */
+  max-width: 450px;
+  padding: 10px;
+  }
+</style>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" />
+<!-- Navbar -->
+<nav class="navbar navbar-dark bg-secondary fixed-top">
+  <div class="container-fluid">
+  
+    <!-- Toggler for offcanvas -->
+    <button class="navbar-toggler d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasDarkNavbar">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <!-- Search Form -->
+    <form class="d-flex ms-auto me-3" role="search">
+      <input class="form-control me-2" type="search" placeholder="Search">
+      <button class="btn btn-success d-none d-sm-inline" type="submit">Search</button>
+      <button class="btn btn-success d-inline d-sm-none" type="submit">
+        <i class="bi bi-search"></i>
+      </button>
+    </form>
+
+    <!-- Right Side (Welcome + Cart + Profile) -->
+    <div class="d-flex align-items-center">
+    
+
+      <!-- Cart Dropdown -->
+      {% if cartshow %}
+    <div class="dropdown me-2">
+      <a class="btn btn-secondary dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+        <i class="bi bi-cart"></i>
+        <span class="badge bg-danger">{{ cart.cart|length }}</span>
+      </a>
+      <ul class="dropdown-menu dropdown-menu-end custom-cart-dropdown">
+        
+          {% if cart.cart|length > 0 %}
+            {% for item in cart.cart %}
+              <li class="p-0 mb-1">
+                
+                <div class="row g-0 align-items-center">
+                  <a href="{% url 'course_detail' item.course.id %}">
+                  <div class="col-4">
+                    <img src="{{ item.course.thumbnail }}" alt="Thumbnail" class="img-fluid rounded" style="max-height: auto; width: auto;">
+                    </a>
+                  </div>
+                  <div class="col-8 ps-2">
+                    <a class="dropdown-item p-0 mb-1 fw-semibold" href="{% url 'course_detail' item.course.id %}">
+                      {{ item.course.category.title }} - Rs. {{ item.course.category.price }}
+                    </a>
+                    <p class="mb-0"><strong>Instructors:</strong>
+                      {% for teacher in item.course.teacher %}
+                        <a href="{% url 'course_detail' item.course.id %}" class="text-decoration-none text-dark">{{ teacher.full_name }}</a>{% if not forloop.last %}, {% endif %}
+                      {% endfor %}
+                    </p>
+                  </div>
+                  
+                </div>
+                
+              </li>
+              {% if not forloop.last %}<hr>{% endif %}
+            {% endfor %}
+             {% else %}
+          <li><span class="text-danger">Cart is empty!</span></li>
+            {% endif %}
+         
+        
+      </ul>
+
+    </div>
+{% endif %}
+        
+      <span class="text-white me-3">Welcome, {{ student.email }}</span>
+
+      <!-- Profile Icon -->
+      <i class="bi bi-person-circle fs-4 text-white"></i>
+    </div>
+  </div>
+</nav>
+
+
+<!-- Offcanvas (for sma ll screens) -->
+<div class="offcanvas offcanvas-start text-bg-dark d-lg-none" tabindex="-1" id="offcanvasDarkNavbar">
+  <div class="offcanvas-header">
+    <h5 class="offcanvas-title">Menu</h5>
+    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
+  </div>
+  <div class="offcanvas-body">
+    <ul class="navbar-nav">
+      <li class="nav-item"><a class="nav-link text-white" href="{% url 'teacher_dashboard' %}">Dashboard</a></li>
+      <li class="nav-item"><a class="nav-link text-white" href="{% url 'teacher_coucourse_page' %}">All Courses</a></li>
+      <li class="nav-item"><a class="nav-link text-white" href="{% url 'mycourse_page' %}">My Courses</a></li>
+      <li class="nav-item"><a class="nav-link text-white" href="#">Assignments</a></li>
+      <li class="nav-item"><a class="nav-link text-white" href="#">Grades</a></li>
+      <li class="nav-item"><a class="nav-link text-white" href="#">Messages</a></li>
+      <li class="nav-item"><a class="nav-link text-white" href="#">Certificates</a></li>
+      <hr>
+      <li class="nav-item"><a class="nav-link text-white" href="#">Profile</a></li>
+      <li class="nav-item"><a class="nav-link text-white" href="#">Setting</a></li>
+      <li class="nav-item"><a class="nav-link text-white" href="{% url 'logout_response' %}">Logout</a></li>
+    </ul>
+  </div>
+</div>
+
+<!-- Persistent Sidebar (for large screens) -->
+<div class="sidebar d-none d-lg-block">
+  <ul class="nav flex-column pt-3">
+    <li class="nav-item"><a class="nav-link text-white" href="{% url 'user_dashboard' %}">Dashboard</a></li>
+    <li class="nav-item"><a class="nav-link text-white" href="{% url 'course_page' %}">All Courses</a></li>
+    <li class="nav-item"><a class="nav-link text-white" href="{% url 'mycourse_page' %}">My Courses</a></li>
+   <li class="nav-item"><a class="nav-link text-white" href="{% url 'assignment' %}">Assignments</a></li>
+      <li class="nav-item"><a class="nav-link text-white" href="#">Grades</a></li>
+      <li class="nav-item"><a class="nav-link text-white" href="#">Messages</a></li>
+      <li class="nav-item"><a class="nav-link text-white" href="#">Certificates</a></li>
+      <hr>
+      <li class="nav-item"><a class="nav-link text-white" href="#">Profile</a></li>
+      <li class="nav-item"><a class="nav-link text-white" href="#">Setting</a></li>
+      <li class="nav-item"><a class="nav-link text-white" href="{% url 'logout_response' %}">Logout</a></li>
+  </ul>
+</div>

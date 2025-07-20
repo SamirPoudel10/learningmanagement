@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Students - Teacher Dashboard</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
+  <style>
+    body {
+      background-color: #f8f9fa;
+    }
+    .sidebar {
+      min-height: 100vh;
+      width: 30vh;
+      background-color: #1f2d3d;
+      color: white;
+    }
+    .sidebar a {
+      color: white;
+      text-decoration: none;
+      display: block;
+      padding: 10px 20px;
+    }
+    .sidebar a:hover, .sidebar a.active {
+      background-color: #32475c;
+      border-left: 4px solid #0dcaf0;
+    }
+    .table-responsive {
+      max-height: 400px;
+      overflow-y: auto;
+      margin-bottom: 2rem;
+    }
+    .badge-status {
+      min-width: 70px;
+      display: inline-block;
+    }
+    h4.course-title {
+      margin-top: 2rem;
+      margin-bottom: 1rem;
+      color: #0d6efd;
+    }
+  </style>
+</head>
+<body>
+  <div class="d-flex">
+    <!-- Sidebar -->
+      {% include 'teacher_view/includes/sidebar.html' %}
+
+    <!-- Main Content -->
+    <div class="container-fluid p-4" style="overflow-y: auto; max-height: 100vh;">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Students</h2>
+        <input
+          type="text"
+          id="searchInput"
+          class="form-control w-25"
+          placeholder="Search students..."
+          onkeyup="filterTables()"
+        />
+      </div>
+
+      <div id="coursesContainer">
+        <!-- Tables for each course will be generated here -->
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const students = [
+      
+      { id: "S001", name: "Alice Johnson", email: "alice@example.com", course: "Mathematics", enrolled: "2024-01-15", status: "Active" },
+      { id: "S002", name: "Bob Smith", email: "bob@example.com", course: "Physics", enrolled: "2024-02-12", status: "Active" },
+      { id: "S003", name: "Carol Lee", email: "carol@example.com", course: "Chemistry", enrolled: "2024-01-20", status: "Inactive" },
+      { id: "S004", name: "David Kim", email: "david@example.com", course: "Physics", enrolled: "2024-03-05", status: "Active" },
+      { id: "S005", name: "Eva Wong", email: "eva@example.com", course: "Mathematics", enrolled: "2024-01-25", status: "Active" },
+      { id: "S006", name: "Frank Liu", email: "frank@example.com", course: "Physics", enrolled: "2024-02-18", status: "Inactive" },
+      { id: "S007", name: "Grace Park", email: "grace@example.com", course: "Chemistry", enrolled: "2024-01-30", status: "Active" },
+      { id: "S008", name: "Henry Davis", email: "henry@example.com", course: "Physics", enrolled: "2024-03-10", status: "Active" },
+      { id: "S009", name: "Ivy Chen", email: "ivy@example.com", course: "Mathematics", enrolled: "2024-01-28", status: "Active" },
+      { id: "S010", name: "Jack Wilson", email: "jack@example.com", course: "Physics", enrolled: "2024-02-22", status: "Active" },
+    ];
+
+    const coursesContainer = document.getElementById("coursesContainer");
+
+    // Group students by course
+    const groupedByCourse = students.reduce((acc, student) => {
+      if (!acc[student.course]) acc[student.course] = [];
+      acc[student.course].push(student);
+      return acc;
+    }, {});
+
+    function renderTables() {
+      coursesContainer.innerHTML = "";
+      for (const [course, students] of Object.entries(groupedByCourse)) {
+        const section = document.createElement("section");
+
+        // Course title with student count
+        const heading = document.createElement("h4");
+        heading.className = "course-title";
+        heading.textContent = `${course} (${students.length} Students)`;
+        section.appendChild(heading);
+
+        // Table container
+        const tableWrapper = document.createElement("div");
+        tableWrapper.className = "table-responsive";
+
+        // Create table
+        const table = document.createElement("table");
+        table.className = "table table-striped table-hover align-middle";
+        table.setAttribute("data-course", course);
+
+        // Table head
+        table.innerHTML = `
+          <thead class="table-primary sticky-top">
+            <tr>
+              <th>Student ID</th>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Enrolled On</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${students
+              .map(
+                (s) => `
+              <tr data-search="${(s.id + s.name + s.email).toLowerCase()}">
+                <td>${s.id}</td>
+                <td>${s.name}</td>
+                <td>${s.email}</td>
+                <td>${new Date(s.enrolled).toLocaleDateString()}</td>
+                <td><span class="badge ${s.status === "Active" ? "bg-success" : "bg-secondary"} badge-status">${s.status}</span></td>
+              </tr>
+            `
+              )
+              .join("")}
+          </tbody>
+        `;
+
+        tableWrapper.appendChild(table);
+        section.appendChild(tableWrapper);
+        coursesContainer.appendChild(section);
+      }
+    }
+
+    function filterTables() {
+      const filter = document.getElementById("searchInput").value.toLowerCase();
+
+      // Loop all tables and rows to filter
+      const tables = coursesContainer.querySelectorAll("table");
+      tables.forEach((table) => {
+        let visibleRowCount = 0;
+        const rows = table.tBodies[0].rows;
+
+        for (const row of rows) {
+          const text = row.getAttribute("data-search");
+          if (text.includes(filter)) {
+            row.style.display = "";
+            visibleRowCount++;
+          } else {
+            row.style.display = "none";
+          }
+        }
+
+        // Hide entire table section if no rows visible
+        table.parentElement.parentElement.style.display = visibleRowCount > 0 ? "" : "none";
+      });
+    }
+
+    // Initial render
+    renderTables();
+  </script>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

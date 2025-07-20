@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>User Login</title>
+
+  <!-- Bootstrap & Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" />
+
+  <style>
+    body {
+      background-color: #6c757d; /* Bootstrap's secondary */
+    }
+
+    .login-box {
+      max-width: 400px;
+      margin: 100px auto;
+      background-color: #212529; /* Dark bg */
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .login-box h2 {
+      margin-bottom: 30px;
+    }
+
+    .form-control:focus {
+      box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+    }
+
+    .divider {
+      display: flex;
+      align-items: center;
+      text-align: center;
+      margin-top: 25px;
+      margin-bottom: 10px;
+    }
+
+    .divider::before,
+    .divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: #ccc;
+    }
+
+    .divider:not(:empty)::before {
+      margin-right: 0.75em;
+    }
+
+    .divider:not(:empty)::after {
+      margin-left: 0.75em;
+    }
+
+    .text-muted a {
+      color: #0d6efd;
+      text-decoration: none;
+    }
+
+    .text-muted a:hover {
+      text-decoration: underline;
+    }
+
+    /* Make sure navbar stays at top */
+    header {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      z-index: 1030;
+    }
+
+    .content-wrapper {
+      padding-top: 80px; /* space for navbar */
+    }
+  </style>
+
+  {% load static %}
+</head>
+<body>
+  {% include 'student_view/includes/header.html' %}
+
+  <div class="content-wrapper d-flex align-items-center justify-content-center min-vh-100">
+    <div class="login-box text-light">
+      <h2 class="text-center">LOGIN</h2>
+      <form id="loginForm" method="POST" action="{% url 'login_response' %}">
+        {% csrf_token %}
+
+        <div class="mb-3">
+          <label for="email" class="form-label">Email address or Username</label>
+          <input type="text" class="form-control" id="email" name="email" required />
+          <small class="text-secondary">We'll never share your email with anyone else.</small>
+        </div>
+
+        <div class="mb-3">
+          <label for="password" class="form-label">Password</label>
+          <div class="input-group">
+            <input type="password" class="form-control" id="password" name="password" required />
+            <button class="btn btn-outline-secondary" type="button" id="togglePassword">
+              <i class="bi bi-eye"></i>
+            </button>
+          </div>
+        </div>
+
+        {% if messages %}
+          {% for message in messages %}
+            <div class="alert {{ message.tags }} text-danger " id="message">{{ message }}</div>
+          {% endfor %}
+        {% endif %}
+
+        <div class="form-check mb-3">
+          <input type="checkbox" class="form-check-input" id="rememberMe" />
+          <label class="form-check-label" for="rememberMe">Remember me</label>
+        </div>
+
+        <div class="mb-3">
+          <a href="#" class="text-decoration-none text-info">Forgot Password?</a>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-lg w-100">Login</button>
+
+        <div class="text-center mt-3">
+          Don’t have an account? <a href="#">Signup</a>
+        </div>
+
+        <div class="divider">Or Login Using</div>
+        <!-- You can insert social icons here -->
+      </form>
+    </div>
+  </div>
+
+  <!-- Bootstrap Bundle -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Toggle password visibility -->
+ <script>
+  document.getElementById("togglePassword").addEventListener("click", function () {
+    const passwordInput = document.getElementById("password");
+    const icon = this.querySelector("i");
+    if (passwordInput.type === "password") {
+      passwordInput.type = "text";
+      icon.classList.replace("bi-eye", "bi-eye-slash");
+    } else {
+      passwordInput.type = "password";
+      icon.classList.replace("bi-eye-slash", "bi-eye");
+    }
+  });
+</script>
+</body>
+</html>

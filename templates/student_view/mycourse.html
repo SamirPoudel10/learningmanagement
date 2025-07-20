@@ -1,0 +1,86 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Courses</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" />
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"></script>
+</head>
+<body>
+
+<!-- Include header/navbar/sidebar -->
+{% include 'student_view/includes/header_user.html' with cartshow=True%}
+
+<!-- Content Wrapper -->
+<div class="content">
+  <div class="container mt-4">
+
+    {% if courses %}
+    <h2 class="fw-bold mb-4">Enrolled Courses</h2>
+      {% for item in courses.courses %}
+      
+        {% if item.status == 'active' %}
+          <div class="container my-5">
+            
+
+            <div class="row g-4 align-items-center bg-body-secondary rounded shadow-sm p-3">
+            <div class="col-md-3">
+                <img src="{{ item.course.thumbnail }}" class="img-fluid rounded w-100" alt="Course Image">
+              </div>
+              <div class="col-md-8">
+                <h5 class="fw-bold mb-3">
+                  Course Title: <span class="text-primary">            <a href="{% url 'view-content' item.course.id %}" class="text-decoration-none text-dark">{{ item.course.category.title }}</a></span>
+                </h5>
+                <p class="mb-2"><strong>Teacher:</strong> {% for  teacher in item.course.teacher %}<a href="#" class="text-decoration-none text-dark">{{teacher.full_name}}, </a>{% endfor %}</p>
+                <p class="mb-2"><strong>Class Duration:</strong> <span class="text-secondary">{{ item.course.category.duration }}</span></p>
+  
+                <p class="fw-bold mb-1">Class Description:</p>
+                <p>{{ item.course.category.description }}</p>
+                <a href="{% url 'view-content' item.course.id   %}"class="btn btn-success">View Content</a>
+              </div>
+            </div>
+              </a>
+            <hr class="my-5">
+          </div>
+          
+          {% elif item.status == 'completed' %}
+           <h2 class="fw-bold mb-4">Completed Courses</h2>
+            <div class="container my-5">
+            
+
+            <div class="row g-4 align-items-center bg-body-secondary rounded shadow-sm p-3">
+              <div class="col-md-6">
+                <img src="{{ item.course.thumbnail }}" class="img-fluid rounded w-100" alt="Course Image">
+              </div>
+              <div class="col-md-6">
+                <h5 class="fw-bold mb-3">
+                  Course Title: <span class="text-primary">{{ item.course.category.title }}</span>
+                </h5>
+                <p class="mb-2"><strong>Teacher:</strong> {% for  teacher in item.course.teacher %}<a href="#" class="text-decoration-none text-dark">{{teacher.full_name}}, </a>{% endfor %}</p>
+                <p class="mb-2"><strong>Class Duration:</strong> <span class="text-secondary">{{ item.course.category.duration }}</span></p>
+                <p class="mb-2"><strong>Grades: </strong> <span class="text-secondary">{{ item.course.grade }}</span></p>
+                <p class="fw-bold mb-1">Class Description:</p>
+                <p>{{ item.category.description }}</p>
+              </div>
+            </div>
+
+            <hr class="my-5">
+          </div>
+          
+          {% endif %}
+      {% endfor %}
+    {% else %}
+      <div class="alert alert-warning mt-5" role="alert">
+        No courses found. You have not enrolled in any course yet.
+      </div>
+    {% endif %}
+
+  </div>
+</div>
+
+</body>
+</html>
