@@ -11,8 +11,10 @@ from course.serializers import *
 from rest_framework_simplejwt.tokens import RefreshToken,AccessToken
 from rest_framework import generics
 from.models import *
+from learningmanagementsystem.permissions import *
 
 class Courselist(APIView):
+    permission_classes = [IsAuthenticated,IsTeacher]
     def get(self,request,format=None):
         course=Course.objects.filter(teacher=1)
         serialiser=CourseSerializer(course,many=True)
@@ -21,11 +23,9 @@ class Courselist(APIView):
         print(serialiser)
         return Response({'courses': serialiser.data}, status=status.HTTP_200_OK)
 class Studentlist(APIView):
-    permission_classes = [IsAuthenticated]
-
+    permission_classes = [IsAuthenticated,IsTeacher]
     def get(self, request):
         teacher=1
-
         courses = Course.objects.filter(teacher=teacher)
         print(courses)
 

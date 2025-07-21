@@ -9,6 +9,7 @@ from .render import *
 from rest_framework_simplejwt.tokens import RefreshToken,AccessToken
 from rest_framework import generics
 from.models import *
+from learningmanagementsystem.permissions import *
 
 from rest_framework_simplejwt.tokens import RefreshToken, TokenError
 
@@ -26,7 +27,7 @@ def get_tokens_for_user(user):
 
 
 class user_registration(APIView):
-    # permission_classes = [AllowAny]
+    permission_classes = [AllowAny]
     renderer_classes=[User_renderer]
     def post(self,request,format=None):
         serializer_data=StudentRegistrationSerializer(data=request.data)
@@ -59,7 +60,7 @@ class user_login(APIView):
 
 
 class LogoutView(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated,IsStudent]
 
     def post(self, request):
         refresh_token = request.COOKIES.get('refresh_token')
@@ -77,13 +78,13 @@ class LogoutView(APIView):
         return response
 class user_profile(APIView):
     renderer_classes=[User_renderer]
-    permission_classes=[IsAuthenticated]
+    permission_classes=[IsAuthenticated,IsStudent]
     def get(self,request,format=None):
         serializer= StudentProfileSerializer(request.user)
         return Response(serializer.data,status=status.HTTP_200_OK)
 class ChangePassword(APIView):
     renderer_classes = [User_renderer]
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated,IsStudent]
 
     def post(self, request, format=None):
         serializer = StudentChangePassSerializer(data=request.data, context={'student': request.user})

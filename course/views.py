@@ -11,13 +11,13 @@ from rest_framework_simplejwt.tokens import RefreshToken,AccessToken
 from rest_framework import generics
 from .models import *
 from rest_framework.parsers import MultiPartParser, FormParser
-
+from learningmanagementsystem.permissions import *
 from rest_framework_simplejwt.tokens import RefreshToken, TokenError
 
 # Create your views here.
 
 class CourseListView(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated,IsStudent]
 
     def get(self, request, format=None):
         courses = Course.objects.all()
@@ -26,7 +26,7 @@ class CourseListView(APIView):
 
 
 class CourseAddView(APIView):
-    # permission_classes=[IsAuthenticated]
+    permission_classes=[IsAuthenticated,IsTeacher]
     parser_classes = (MultiPartParser, FormParser)
     def post(self,request,format=None):
         serializer_data=CourseAddSerializer(data=request.data)
@@ -41,7 +41,7 @@ class CourseAddView(APIView):
 
 
 class CategoryAddView(APIView):
-    # permission_classes=[IsAuthenticated]
+    permission_classes=[IsAuthenticated]
     def post(self,request,format=None):
         serializer_data=CategoryAddSerializer(data=request.data)
         print(serializer_data)
@@ -93,7 +93,7 @@ class CourseDetailView(APIView):
             return Response({'error': 'Course not found'}, status=status.HTTP_404_NOT_FOUND)
  
 class CartView(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated,IsStudent]
         
     def post(self, request, format=None):
         try:

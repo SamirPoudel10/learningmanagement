@@ -7,6 +7,7 @@ from django.contrib import messages
 from .form import *
 import json
 from django.http import HttpResponseRedirect
+from collections import defaultdict
 # Create your views here.
 def dashboard(request):
     return render(request,'teacher_view/dashboard.html')
@@ -34,6 +35,8 @@ def course(request):
             return redirect('login_page')
         else:
             return redirect('login_page')
+    elif response.status_code == 403:
+        return render(request,'permission_error.html')
     else:
         courses = {}
     
@@ -190,5 +193,12 @@ def student(request):
             return redirect('login_page')
         else:
             return redirect('login_page')
-    print(course)
-    return render(request,'teacher_view/student.html')
+            
+    else:
+        grouped = defaultdict(list)
+        for item in course:
+            course_title = item["course"]["category"]["title"]
+            grouped[course_title].append(item)
+        print(grouped)
+    return render(request, "teacher_view/student.html", {"grouped_students": dict(grouped)})
+    
