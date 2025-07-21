@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     'rest_framework','rest_framework.authtoken','jwt','rest_framework_simplejwt',
     'mathfilters',
     'rest_framework_simplejwt.token_blacklist',
+    'user'
 ]   
 CLOUDINARY_STORAGE = {
     
@@ -91,7 +92,7 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'learningmanagementsystem.urls'
-AUTH_USER_MODEL='Student.Student'
+AUTH_USER_MODEL='user.User'
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST='smtp.gmail.com'
 EMAIL_PORT=587

@@ -1,9 +1,7 @@
 from rest_framework import serializers
-# from main.models import *
 from .models import *
-from .util import *  # correct import
+from .util import *  
 
-# later in code:
 from cloudinary.utils import cloudinary_url
 
 
