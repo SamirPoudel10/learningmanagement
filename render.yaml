@@ -1,0 +1,41 @@
+services:
+  - type: web
+    name: lms-api
+    env: python
+    region: oregon   # change if needed
+    plan: starter
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn learningmanagementsystem.wsgi:application
+    envVars:
+      - key: SECRET_KEY
+        fromSecret: SECRET_KEY
+      - key: DEBUG
+        value: "False"   # Set False for production
+      - key: ALLOWED_HOSTS
+        value: "lms-api.onrender.com"
+      - key: DATABASE_URL
+        fromDatabase:
+          name: lms-mysql-db
+          property: connectionString
+      - key: cloud_name
+        fromSecret: cloud_name
+      - key: api_key
+        fromSecret: api_key
+      - key: api_secret
+        fromSecret: api_secret
+      - key: Email_user
+        fromSecret: Email_user
+      - key: Email_pass
+        fromSecret: Email_pass
+      - key: SIMPLE_JWT_SECRET_KEY
+        fromSecret: SIMPLE_JWT_SECRET_KEY
+    autoDeploy: true
+    repo: https://github.com/SamirPoudel10/learningmanagement.git
+    branch: main
+
+  - type: database
+    name: lms-mysql-db
+    databaseName: lms_default
+    plan: starter
+    region: oregon
+    mysqlVersion: "8"

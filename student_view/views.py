@@ -8,12 +8,7 @@ from django.contrib import messages
 from django.http import HttpResponseRedirect
 
 # Create your views here.
-def home(request):
-    return render(request,'student_view/home.html')
-def login_page(request):
-    return render(request,'student_view/login.html')
-def signup(request):
-    return render(request,'student_view/signup.html')
+
 def course(request):
     api_url = 'http://127.0.0.1:8000/api/course/' 
     access_token = request.COOKIES.get('access_token') 
@@ -77,102 +72,8 @@ def course(request):
     context={'cart':cart,'courses':courses}
     print(context)
     return render(request,'student_view/course.html',context)
-def about_us(request):
-    return render(request,'student_view/about.html')
-def contact_us(request):
-    return render(request,'student_view/contact.html')
 def dashboard(request):
     return render(request,'student_view/dashboard.html')
-def login_response(request):
-    if request.method == 'POST':
-        email = request.POST.get('email')
-        password = request.POST.get('password')
-
-        api_url = 'http://127.0.0.1:8000/api/student/login/'
-        payload = {'email': email, 'password': password}
-        headers = {'Content-Type': 'application/json'}
-
-        api_response = requests.post(api_url, json=payload, headers=headers)
-
-        if api_response.status_code in [200, 201]:
-            data = api_response.json()
-
-            # Extract tokens nested inside 'token' key
-            tokens = data.get('token', {})
-            access_token = tokens.get('access')
-            refresh_token = tokens.get('refresh')
-
-            if access_token and refresh_token:
-                response = redirect('user_dashboard')
-
-                # Set HttpOnly cookies
-                response.set_cookie(
-                    key='access_token',
-                    value=access_token,
-                    httponly=True,
-                    samesite='Lax',
-                    secure=False,  # Set True in production with HTTPS
-                )
-                response.set_cookie(
-                    key='refresh_token',
-                    value=refresh_token,
-                    httponly=True,
-                    samesite='Lax',
-                    secure=False,
-                )
-                # login(request,request.user)
-                messages.success(request, 'Login successful.')
-                return response
-            else:
-                messages.error(request, 'Token missing in API response.')
-        else:
-            messages.error(request, 'Invalid credentials or API error.')
-
-    return redirect('login_page')
-def signup_response(request):
-    if request.method == 'POST':
-        print("hi")
-        first_name = request.POST.get('first_name')
-        last_name = request.POST.get('last_name')
-        full_name= f'{first_name} {last_name}'
-        email = request.POST.get('email')
-        qualification = request.POST.get('qualification')
-        mobilenumber = request.POST.get('phone')
-        address = request.POST.get('address')
-        interested_categories = request.POST.get('interested_categories')
-        password = request.POST.get('password')
-        password2 = request.POST.get('password2')
-        print(password2)
-
-        api_url = 'http://127.0.0.1:8000/api/student/register/'  # Your signup API URL
-
-        payload = {
-            'full_name': full_name,
-            'email': email,
-            'qualification': qualification,
-            'mobilenumber': mobilenumber,
-            'address': address,
-            'interested_categories': interested_categories,
-            'password': password,
-            'password2': password2,
-        }
-
-        print(payload)  # Debugging
-        headers = {'Content-Type': 'application/json'}
-        response = requests.post(api_url, json=payload,headers = {'Content-Type': 'application/json'})
-        print(response.status_code)
-
-        if response.status_code == 201 :  # Usually 201 for successful creation
-            messages.success(request, 'Signup successful. Please login.')
-            return redirect('login_page')
-        # else:
-        #     error_data = response.json().get('errors', {})
-        #     for field, errors in error_data.items():
-        #         for error in errors:
-        #             messages.error(request, f"{field.capitalize()}: {error}")
-        #     print(response.text)  # Debugging error message
-
-    return redirect('signup_page')
 
 def logout_response(request):
     access_token = request.COOKIES.get('access_token') 
@@ -180,7 +81,7 @@ def logout_response(request):
     if not access_token:
         print("hi")
         return redirect('home')
-    api_url = 'http://127.0.0.1:8000/api/student/logout/'
+    api_url = 'http://127.0.0.1:8000/api/user/logout/'
     headers = {'Authorization': f'Bearer {access_token}'}  # Use Bearer prefix for JWT
 
     response = requests.post(api_url, headers=headers)
@@ -209,7 +110,7 @@ def logout_response(request):
 
     else:
         messages.warning(request,"Error While logging out")
-        return redirect('user_dashboard')
+        return redirect('student_dashboard')
 
     
 
@@ -335,8 +236,7 @@ def addtocart(request,course_id):
             return redirect('login_page')
     else:
         print("hi")
-        messages.error(request,"Fail to add item to cart. Already in cart")
-       
+        messages.error(request,"Fail to add item to cart. Already in cart") 
     return redirect('course_detail',course_id=course_id)
 def deletecart(request,course_id):
     access_token = request.COOKIES.get('access_token')  # Use access token
@@ -469,7 +369,7 @@ def view_content(request,course_id):
         return render(request, 'mycourse.html', {'courses': [], 'error': 'Access token missing'})
     user_id = request.session.get('user_id')
 
-    api_url = f'http://127.0.0.1:8000/api/user/course/{course_id}'
+    api_url = f'http://127.0.0.1:8000/api/student/course/{course_id}'
     headers = {'Authorization': f'Bearer {access_token}'}  # Use Bearer prefix for JWT
 
     response = requests.get(api_url, headers=headers)

@@ -4,7 +4,8 @@ from Student.models import Student
 
 class IsTeacher(permissions.BasePermission):
     def has_permission(self, request, view):
-        return request.user and Teacher.objects.filter(email=request.user.email).exists()
+        print(request.user)
+        return request.user and request.user.role=='teacher'
 class IsStudent(permissions.BasePermission):
     def has_permission(self, request, view):
-        return request.user and Student.objects.filter(email=request.user.email).exists()
+        return request.user and request.user.role=='student'

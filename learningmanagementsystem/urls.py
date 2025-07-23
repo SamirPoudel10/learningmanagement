@@ -24,8 +24,10 @@ from rest_framework_simplejwt.views import (
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('',include('student_view.urls')),
+    path('',include('user_view.urls')),
     path('teacher/',include('teacher_view.urls')),
     path('api/student/',include('Student.urls')),
     path('api/course/',include('course.urls')),
-    path('api/teacher/',include('Teacher.urls'))
+    path('api/teacher/',include('Teacher.urls')),
+    path('api/user/',include('user.urls'))
 ]

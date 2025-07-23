@@ -9,11 +9,9 @@ from django.utils import timezone
 from django.contrib.auth.models import Group, Permission
 from user.models import *
 class Teacher(models.Model):
-    
     user=models.OneToOneField(User,on_delete=models.CASCADE,related_name='teacher_user')
-
     def __str__(self):
-        return self.email
+        return self.user.email
 
    
 

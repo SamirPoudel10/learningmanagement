@@ -17,6 +17,7 @@ class Courselist(APIView):
     permission_classes = [IsAuthenticated,IsTeacher]
     def get(self,request,format=None):
         course=Course.objects.filter(teacher=1)
+        print("hi")
         serialiser=CourseSerializer(course,many=True)
         # if serialiser.is_valid():
         # serialiser.json()
