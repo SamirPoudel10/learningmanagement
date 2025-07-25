@@ -4,7 +4,7 @@ from .util import *
 
 from cloudinary.utils import cloudinary_url
 
-
+from Student.models import *
  
 from django.utils.encoding import smart_str,force_bytes,DjangoUnicodeDecodeError
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
@@ -29,12 +29,20 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
     def validate(self,data):
         password= data.get('password')
         password2=data.get('password2')
+        print("hi")
         if password != password2:
             raise serializers.ValidationError("Passwords doesnot match")
 
         return data
     def create(self,validate_data):
-        return User.objects.create_user(**validate_data,role='student')
+        user= User.objects.create_user(**validate_data,role='student')
+        student=Student.objects.create_student(user=user)
+        student.save()
+        print(student)
+        print("hi")
+        print("HI")
+        return user
+        # return 
 
 
 class UserLoginSerializer(serializers.ModelSerializer):

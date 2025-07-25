@@ -167,7 +167,7 @@ def course_detail(request,course_id):
         return render(request, 'student_view/mycourse.html', {'courses': [], 'error': 'Access token missing'})
     user_id = request.session.get('user_id')
 
-    api_url = f'http://127.0.0.1:8000/api/course/{course_id}'
+    api_url = f'http://127.0.0.1:8000/api/course/{course_id}/'
     headers = {'Authorization': f'Bearer {access_token}'}  # Use Bearer prefix for JWT
 
     response = requests.get(api_url, headers=headers)

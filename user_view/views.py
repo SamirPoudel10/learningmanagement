@@ -73,7 +73,6 @@ def login_response(request):
     return redirect('login_page')
 def signup_response(request):
     if request.method == 'POST':
-        print("hi")
         first_name = request.POST.get('first_name')
         last_name = request.POST.get('last_name')
         full_name= f'{first_name} {last_name}'

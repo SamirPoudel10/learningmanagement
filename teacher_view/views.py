@@ -108,7 +108,6 @@ def course_add(request):
         form = CourseForm()
     return render(request, 'teacher_view/course_add.html', {'form': form})
 def category_add(request):
-    pe
     if request.method == 'POST':
         form = CourseCategoryForm(request.POST)
         print("hi")

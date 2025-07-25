@@ -79,7 +79,8 @@ class CourseDetailView(APIView):
         user = request.user
         try:
             course = Course.objects.get(id=course_id)
-            student=Student.objects.get(id=user.id)
+            user=User.objects.get(id=user.id)
+            student=Student.objects.get(user=user)
             cart=False
             enrolled=False
             if Cart.objects.filter(course=course,student=student).exists():
@@ -98,8 +99,8 @@ class CartView(APIView):
     def post(self, request, format=None):
         try:
             user = request.user
-            print(user)
-            student = Student.objects.get(id=user.id)
+            user=User.objects.get(id=user.id)
+            student = Student.objects.get(user=user)
             course = Course.objects.get(id=request.data.get('course_id'))
             print(student,course)
             serializer = CartAddSerializer(data={
@@ -126,7 +127,8 @@ class CartView(APIView):
     def get(self,request,format=None):
         try:
             user = request.user
-            student = Student.objects.get(id=user.id)
+            user=User.objects.get(id=user.id)
+            student = Student.objects.get(user=user)
             cart_items = Cart.objects.filter(student=student)
             serializer = CartSerializer(cart_items, many=True)
             return Response({'cart': serializer.data}, status=status.HTTP_200_OK)
@@ -137,7 +139,8 @@ class CartView(APIView):
     def delete(self,request,format=None):
         try:
             user=request.user
-            student=Student.objects.get(id=user.id)
+            user=User.objects.get(id=user.id)
+            student=Student.objects.get(user=user)
             data=request.data
             course= Course.objects.get(id=data.get('course_id'))
             print(course)

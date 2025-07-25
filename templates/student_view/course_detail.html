@@ -102,6 +102,7 @@
           <button class="btn btn-secondary w-100 mb-2"> Item already added to Cart</button>
           <a href="{% url 'cart'  %}" class="btn btn-primary w-100 mb-2">View cart  </a>
           {% else %}
+          {{course.id}}
             <a href="{% url 'add-to-cart' course.id %}" class="btn btn-primary w-100 mb-2">Add to Cart</a>
           {% endif %}
             
