@@ -162,6 +162,46 @@ def category_add(request):
     else:
         form = CourseCategoryForm()
     return render(request, 'teacher_view/category_add.html', {'form': form})
+def course_delete(request,course_id):
+    access_token = request.COOKIES.get('access_token')  # Use access token
+    if not access_token:
+        return render('teacher_course')
+    print(course_id)
+    payload={
+        "course_id":course_id
+    }
+    api_url = f'http://127.0.0.1:8000/api/course/modify/'
+    headers = {'Authorization': f'Bearer {access_token}'}  # Use Bearer prefix for JWT
+
+    response = requests.delete(api_url,data=payload, headers=headers)
+
+    if response.status_code == 200:
+        messages.warning(request, 'Course delete successfully')
+        print(messages)
+    
+    elif response.status_code == 401:  # Unauthorized, token expired
+        # Here you can try to refresh token using refresh_token
+        refresh_token = request.COOKIES.get('refresh_token')
+        if refresh_token:
+            # Call refresh token API to get new access token
+            refresh_api_url = 'http://127.0.0.1:8000/api/token/refresh/'  # Your refresh endpoint
+            refresh_response = requests.post(refresh_api_url, json={'refresh': refresh_token})
+            if refresh_response.status_code == 200:
+                new_access_token = refresh_response.json().get('access')
+                if new_access_token:
+                    # Set new access token cookie
+                    response = redirect('enrolledcourse')  # reload this view
+                    response.set_cookie('access_token', new_access_token, httponly=True, samesite='Lax', secure=False)
+                    return response
+            # If refresh fails, redirect to login
+            return redirect('login_page')
+        else:
+            return redirect('login_page')
+    else:
+        print("hi")
+        messages.error(request,"Fail to delete Course")
+       
+    return redirect('teacher_course')
 
 
 def student(request):

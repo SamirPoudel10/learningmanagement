@@ -25,7 +25,7 @@ class CourseListView(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-class CourseAddView(APIView):
+class CourseModifyView(APIView):
     permission_classes=[IsAuthenticated,IsTeacher]
     parser_classes = (MultiPartParser, FormParser)
     def post(self,request,format=None):
@@ -37,7 +37,24 @@ class CourseAddView(APIView):
             return Response({'msg':'Course Added Successfully'},status=status.HTTP_201_CREATED) 
         print(serializer_data.errors)    
         return Response({'msg':'Course Addition Unsuccesful'},status=status.HTTP_404_NOT_FOUND)
+    
+    def delete(self,request,format=None):
+        try:
+            user=request.user
+            user=User.objects.get(id=user.id)
+            student=Teacher.objects.get(user=user)
+            data=request.data
+            print(data)
+            course= Course.objects.get(id=data.get('course_id'))
+            print(course)
+            if course.delete():
+                return Response(status=status.HTTP_200_OK)
+            else:
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+        except:
+            print("sgdhfhdsfbnjdzhjfjzfhjzsj")
+            return Response({'error':'Course NOt Found'},status=status.HTTP_404_NOT_FOUND)
 
 
 class CategoryAddView(APIView):
@@ -47,7 +64,6 @@ class CategoryAddView(APIView):
         print(serializer_data)
         if serializer_data.is_valid(raise_exception=True):
             serializer_data.save()
-            print("hi")
             return Response({'msg':'Course Added Successfully'},status=status.HTTP_201_CREATED) 
         print(serializer_data.errors)    
         return Response({'msg':'Course Addition Unsuccesful'},status=status.HTTP_404_NOT_FOUND)
@@ -68,7 +84,6 @@ class EnrolledCourseView(APIView):
             print(enrollments)
             serializer = EnrollmentSerializer(enrollments, many=True)
             print(serializer.data)
-            print("samir")
             return Response({'courses': serializer.data}, status=status.HTTP_200_OK)
             
         except Student.DoesNotExist:

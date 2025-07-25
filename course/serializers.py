@@ -32,7 +32,10 @@ class CourseAddSerializer(serializers.ModelSerializer):
     class Meta:
         model=Course
         fields=['teacher','category','learning_outcomes','thumbnail']
-
+# class CourseRemoveSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model=Course
+#         fields=['id']
 class CategoryAddSerializer(serializers.ModelSerializer):
     class Meta:
         model=CourseCategory

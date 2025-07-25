@@ -275,7 +275,7 @@ def deletecart(request,course_id):
             return redirect('login_page')
     else:
         print("hi")
-        messages.error(request,"Fail to add item to cart. Already in cart")
+        messages.error(request,"Fail to delete item from cart.")
        
     return redirect('cart')
 
